@@ -31,8 +31,12 @@ chromium-browser --kiosk --disable-infobars --disable-restore-session-state "{ur
     script_path = "/usr/local/bin/start_google_slides.sh"
     with open(script_path, "w") as script_file:
         script_file.write(script_content)
-    os.chmod(script_path, 0o755)
     print(f"Startup script created at: {script_path}")
+
+    # Make the script executable
+    subprocess.run(["chmod", "+x", script_path], check=True)
+    print(f"Made {script_path} executable.")
+
     return script_path
 
 def create_autostart_entry(script_path):
@@ -103,7 +107,7 @@ def main():
 
     # Step 1: Ensure ~/.config/autostart directory exists
     create_autostart_dir()
-    
+
     # Step 2: Get the Google Slides URL
     url = input("Enter the published URL of your Google Slides presentation: ").strip()
     if not url:
@@ -115,7 +119,7 @@ def main():
 
     # Step 4: Create the startup script for Google Slides
     script_path = create_slides_script(url)
-    
+
     # Step 5: Create the autostart entry for Google Slides
     create_autostart_entry(script_path)
 
