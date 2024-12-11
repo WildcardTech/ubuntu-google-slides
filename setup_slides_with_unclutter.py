@@ -1,6 +1,12 @@
 import os
 import subprocess
 
+def create_autostart_dir():
+    """Ensure the ~/.config/autostart directory exists."""
+    autostart_dir = os.path.expanduser("~/.config/autostart")
+    os.makedirs(autostart_dir, exist_ok=True)
+    print(f"Ensured {autostart_dir} directory exists.")
+
 def install_packages():
     """Ensure necessary packages are installed."""
     print("Checking for required packages (Chromium, Unclutter)...")
@@ -32,8 +38,6 @@ chromium-browser --kiosk --disable-infobars --disable-restore-session-state "{ur
 def create_autostart_entry(script_path):
     """Create the autostart .desktop file for Google Slides."""
     autostart_dir = os.path.expanduser("~/.config/autostart")
-    os.makedirs(autostart_dir, exist_ok=True)
-    
     desktop_entry_content = f"""[Desktop Entry]
 Type=Application
 Exec={script_path}
@@ -52,8 +56,6 @@ Comment=Automatically run Google Slides on boot
 def create_unclutter_autostart():
     """Create an autostart entry for Unclutter."""
     autostart_dir = os.path.expanduser("~/.config/autostart")
-    os.makedirs(autostart_dir, exist_ok=True)
-    
     unclutter_entry_content = """[Desktop Entry]
 Type=Application
 Exec=unclutter -idle 0
@@ -98,26 +100,29 @@ unclutter -idle 0
 
 def main():
     print("Google Slides Auto-Run, Screen Settings, and Unclutter Setup")
+
+    # Step 1: Ensure ~/.config/autostart directory exists
+    create_autostart_dir()
     
-    # Step 1: Get the Google Slides URL
+    # Step 2: Get the Google Slides URL
     url = input("Enter the published URL of your Google Slides presentation: ").strip()
     if not url:
         print("URL cannot be empty. Exiting.")
         return
 
-    # Step 2: Install required packages
+    # Step 3: Install required packages
     install_packages()
 
-    # Step 3: Create the startup script for Google Slides
+    # Step 4: Create the startup script for Google Slides
     script_path = create_slides_script(url)
     
-    # Step 4: Create the autostart entry for Google Slides
+    # Step 5: Create the autostart entry for Google Slides
     create_autostart_entry(script_path)
 
-    # Step 5: Create the autostart entry for Unclutter
+    # Step 6: Create the autostart entry for Unclutter
     create_unclutter_autostart()
 
-    # Step 6: Update the ~/.xsessionrc file to prevent screen blanking and run unclutter
+    # Step 7: Update the ~/.xsessionrc file to prevent screen blanking and run unclutter
     update_xsessionrc()
 
     print("\nSetup complete! Reboot your system to test the setup.")
