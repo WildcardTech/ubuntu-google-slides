@@ -2,27 +2,18 @@ import os
 import subprocess
 
 def create_autostart_dir():
-    """Ensure the ~/.config/autostart directory exists."""
+    """Create the ~/.config/autostart directory."""
     autostart_dir = os.path.expanduser("~/.config/autostart")
 
-    try:
-        os.makedirs(autostart_dir, exist_ok=True)
-        print(f"Ensured {autostart_dir} directory exists.")
-    except Exception as e:
-        print(f"Failed to create directory {autostart_dir}: {e}")
+    os.makedirs(autostart_dir, exist_ok=True)
+    print(f"Created {autostart_dir} directory.")
 
 def install_packages():
-    """Ensure necessary packages are installed."""
-    print("Checking for required packages (Chromium, Unclutter)...")
+    """Install necessary packages."""
+    print("Installing required packages (Chromium, Unclutter)...")
     packages = ["chromium-browser", "unclutter"]
-    for package in packages:
-        result = subprocess.run(["which", package], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        if result.returncode == 0:
-            print(f"{package} is already installed.")
-        else:
-            print(f"{package} is not installed. Installing {package}...")
-            subprocess.run(["sudo", "apt", "update"], check=True)
-            subprocess.run(["sudo", "apt", "install", "-y", package], check=True)
+    subprocess.run(["sudo", "apt", "update"], check=True)
+    subprocess.run(["sudo", "apt", "install", "-y"] + packages, check=True)
 
 def create_slides_script(url):
     """Create the startup shell script for Google Slides."""
@@ -38,7 +29,7 @@ chromium-browser --kiosk --disable-infobars --disable-restore-session-state "{ur
     with open(script_path, "w") as script_file:
         script_file.write(script_content)
     os.chmod(script_path, 0o755)
-    print(f"Startup script created at: {script_path}")
+    print(f"Created startup script at: {script_path}")
     return script_path
 
 def create_autostart_entry(script_path):
@@ -58,7 +49,7 @@ Comment=Automatically run Google Slides on boot
     # Write the desktop entry content
     with open(desktop_entry_path, "w") as desktop_file:
         desktop_file.write(desktop_entry_content)
-    print(f"Autostart entry created at: {desktop_entry_path}")
+    print(f"Created autostart entry at: {desktop_entry_path}")
     return desktop_entry_path
 
 def create_unclutter_autostart():
@@ -78,7 +69,7 @@ Comment=Hide the mouse cursor when idle
     # Write the unclutter entry content
     with open(unclutter_entry_path, "w") as unclutter_file:
         unclutter_file.write(unclutter_entry_content)
-    print(f"Unclutter autostart entry created at: {unclutter_entry_path}")
+    print(f"Created unclutter autostart entry at: {unclutter_entry_path}")
 
 def update_xsessionrc():
     """Add xset commands and unclutter to ~/.xsessionrc."""
@@ -92,23 +83,14 @@ xset s noblank
 # Run unclutter to hide the mouse cursor when idle
 unclutter -idle 0
 """
-
-    if os.path.exists(xsessionrc_path):
-        with open(xsessionrc_path, "r") as file:
-            content = file.read()
-        if commands.strip() not in content:
-            content += commands
-    else:
-        content = commands
-
     with open(xsessionrc_path, "w") as file:
-        file.write(content)
-    print(f"xset commands and unclutter added to {xsessionrc_path}")
+        file.write(commands)
+    print(f"Updated {xsessionrc_path} with xset commands and unclutter.")
 
 def main():
     print("Google Slides Auto-Run, Screen Settings, and Unclutter Setup")
 
-    # Step 1: Ensure ~/.config/autostart directory exists
+    # Step 1: Create ~/.config/autostart directory
     create_autostart_dir()
 
     # Step 2: Get the Google Slides URL
