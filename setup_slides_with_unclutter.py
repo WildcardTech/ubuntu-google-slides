@@ -12,10 +12,10 @@ def install_packages():
     print("Checking for required packages (Chromium, Unclutter)...")
     packages = ["chromium-browser", "unclutter"]
     for package in packages:
-        try:
-            subprocess.run([package, "--version"], check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        result = subprocess.run(["which", package], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        if result.returncode == 0:
             print(f"{package} is already installed.")
-        except FileNotFoundError:
+        else:
             print(f"{package} is not installed. Installing {package}...")
             subprocess.run(["sudo", "apt", "update"], check=True)
             subprocess.run(["sudo", "apt", "install", "-y", package], check=True)
