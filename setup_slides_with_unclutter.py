@@ -29,14 +29,16 @@ sleep 10
 chromium-browser --kiosk --disable-infobars --disable-restore-session-state "{url}"
 """
     script_path = "/usr/local/bin/start_google_slides.sh"
+    
+    # Check if the script already exists and replace it
+    if os.path.exists(script_path):
+        os.remove(script_path)
+        print(f"Existing script {script_path} removed.")
+    
     with open(script_path, "w") as script_file:
         script_file.write(script_content)
+    os.chmod(script_path, 0o755)
     print(f"Startup script created at: {script_path}")
-
-    # Make the script executable
-    subprocess.run(["chmod", "+x", script_path], check=True)
-    print(f"Made {script_path} executable.")
-
     return script_path
 
 def create_autostart_entry(script_path):
@@ -52,6 +54,12 @@ Name=Start Google Slides
 Comment=Automatically run Google Slides on boot
 """
     desktop_entry_path = os.path.join(autostart_dir, "google_slides.desktop")
+    
+    # Check if the desktop entry already exists and replace it
+    if os.path.exists(desktop_entry_path):
+        os.remove(desktop_entry_path)
+        print(f"Existing desktop entry {desktop_entry_path} removed.")
+    
     with open(desktop_entry_path, "w") as desktop_file:
         desktop_file.write(desktop_entry_content)
     print(f"Autostart entry created at: {desktop_entry_path}")
@@ -70,6 +78,12 @@ Name=Unclutter
 Comment=Hide the mouse cursor when idle
 """
     unclutter_entry_path = os.path.join(autostart_dir, "unclutter.desktop")
+    
+    # Check if the unclutter entry already exists and replace it
+    if os.path.exists(unclutter_entry_path):
+        os.remove(unclutter_entry_path)
+        print(f"Existing unclutter entry {unclutter_entry_path} removed.")
+    
     with open(unclutter_entry_path, "w") as unclutter_file:
         unclutter_file.write(unclutter_entry_content)
     print(f"Unclutter autostart entry created at: {unclutter_entry_path}")
@@ -107,7 +121,7 @@ def main():
 
     # Step 1: Ensure ~/.config/autostart directory exists
     create_autostart_dir()
-
+    
     # Step 2: Get the Google Slides URL
     url = input("Enter the published URL of your Google Slides presentation: ").strip()
     if not url:
@@ -119,7 +133,7 @@ def main():
 
     # Step 4: Create the startup script for Google Slides
     script_path = create_slides_script(url)
-
+    
     # Step 5: Create the autostart entry for Google Slides
     create_autostart_entry(script_path)
 
@@ -133,3 +147,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+    
