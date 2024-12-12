@@ -4,8 +4,11 @@ import subprocess
 def create_autostart_dir():
     """Ensure the ~/.config/autostart directory exists."""
     autostart_dir = os.path.expanduser("~/.config/autostart")
-    os.makedirs(autostart_dir, exist_ok=True)
-    print(f"Ensured {autostart_dir} directory exists.")
+    try:
+        os.makedirs(autostart_dir, exist_ok=True)
+        print(f"Ensured {autostart_dir} directory exists.")
+    except Exception as e:
+        print(f"Failed to create directory {autostart_dir}: {e}")
 
 def install_packages():
     """Ensure necessary packages are installed."""
