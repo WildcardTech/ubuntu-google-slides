@@ -5,12 +5,9 @@ def create_autostart_dir():
     """Create the ~/.config/autostart directory."""
     autostart_dir = os.path.expanduser("~/.config/autostart")
     try:
-        os.makedirs(autostart_dir, exist_ok=True)
-        if os.path.exists(autostart_dir):
-            print(f"Successfully created or verified {autostart_dir} directory.")
-        else:
-            print(f"Directory {autostart_dir} does not exist after attempting to create it.")
-    except Exception as e:
+        subprocess.run(["sudo", "mkdir", "-p", autostart_dir], check=True)
+        print(f"Successfully created {autostart_dir} directory.")
+    except subprocess.CalledProcessError as e:
         print(f"Failed to create directory {autostart_dir}: {e}")
 
 def install_packages():
@@ -35,14 +32,10 @@ chromium-browser --kiosk --disable-infobars --disable-restore-session-state "{ur
 """
     script_path = "/usr/local/bin/start_google_slides.sh"
     try:
-        with open("start_google_slides.sh", "w") as script_file:
+        with open(script_path, "w") as script_file:
             script_file.write(script_content)
-        subprocess.run(["sudo", "mv", "start_google_slides.sh", script_path], check=True)
         subprocess.run(["sudo", "chmod", "755", script_path], check=True)
-        if os.path.exists(script_path):
-            print(f"Successfully created startup script at: {script_path}")
-        else:
-            print(f"Startup script {script_path} does not exist after attempting to create it.")
+        print(f"Successfully created startup script at: {script_path}")
     except Exception as e:
         print(f"Failed to create script {script_path}: {e}")
     return script_path
@@ -61,13 +54,9 @@ Comment=Automatically run Google Slides on boot
 """
     desktop_entry_path = os.path.join(autostart_dir, "google_slides.desktop")
     try:
-        with open("google_slides.desktop", "w") as desktop_file:
+        with open(desktop_entry_path, "w") as desktop_file:
             desktop_file.write(desktop_entry_content)
-        subprocess.run(["sudo", "mv", "google_slides.desktop", desktop_entry_path], check=True)
-        if os.path.exists(desktop_entry_path):
-            print(f"Successfully created autostart entry at: {desktop_entry_path}")
-        else:
-            print(f"Autostart entry {desktop_entry_path} does not exist after attempting to create it.")
+        print(f"Successfully created autostart entry at: {desktop_entry_path}")
     except Exception as e:
         print(f"Failed to create autostart entry {desktop_entry_path}: {e}")
     return desktop_entry_path
@@ -86,13 +75,9 @@ Comment=Hide the mouse cursor when idle
 """
     unclutter_entry_path = os.path.join(autostart_dir, "unclutter.desktop")
     try:
-        with open("unclutter.desktop", "w") as unclutter_file:
+        with open(unclutter_entry_path, "w") as unclutter_file:
             unclutter_file.write(unclutter_entry_content)
-        subprocess.run(["sudo", "mv", "unclutter.desktop", unclutter_entry_path], check=True)
-        if os.path.exists(unclutter_entry_path):
-            print(f"Successfully created unclutter autostart entry at: {unclutter_entry_path}")
-        else:
-            print(f"Unclutter autostart entry {unclutter_entry_path} does not exist after attempting to create it.")
+        print(f"Successfully created unclutter autostart entry at: {unclutter_entry_path}")
     except Exception as e:
         print(f"Failed to create unclutter autostart entry {unclutter_entry_path}: {e}")
 
@@ -109,13 +94,9 @@ xset s noblank
 unclutter -idle 0
 """
     try:
-        with open("xsessionrc_temp", "w") as file:
+        with open(xsessionrc_path, "w") as file:
             file.write(commands)
-        subprocess.run(["sudo", "mv", "xsessionrc_temp", xsessionrc_path], check=True)
-        if os.path.exists(xsessionrc_path):
-            print(f"Successfully updated {xsessionrc_path} with xset commands and unclutter.")
-        else:
-            print(f"{xsessionrc_path} does not exist after attempting to update it.")
+        print(f"Successfully updated {xsessionrc_path} with xset commands and unclutter.")
     except Exception as e:
         print(f"Failed to update {xsessionrc_path}: {e}")
 
@@ -150,4 +131,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
