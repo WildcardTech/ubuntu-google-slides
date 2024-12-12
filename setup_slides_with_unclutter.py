@@ -1,27 +1,20 @@
 import os
-import subprocess
-
-def run_command(command, use_sudo=False):
-    """Run a shell command with optional sudo and log output."""
-    if use_sudo:
-        command.insert(0, 'sudo')
-    result = subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
-    print(result.stdout)
-    if result.returncode != 0:
-        print(f"Error running command: {' '.join(command)}\n{result.stderr}")
-    return result.returncode
 
 def create_autostart_dir():
     """Create the ~/.config/autostart directory."""
     autostart_dir = os.path.expanduser("~/.config/autostart")
-    run_command(["mkdir", "-p", autostart_dir], use_sudo=True)
+    os.system(f"sudo mkdir -p {autostart_dir}")
+    if os.path.exists(autostart_dir):
+        print(f"Successfully created {autostart_dir} directory.")
+    else:
+        print(f"Failed to create {autostart_dir} directory.")
 
 def install_packages():
     """Install necessary packages."""
     print("Updating package lists...")
-    run_command(["apt", "update"], use_sudo=True)
+    os.system("sudo apt update")
     print("Installing required packages (Chromium, Unclutter)...")
-    run_command(["apt", "install", "-y", "chromium-browser", "unclutter"], use_sudo=True)
+    os.system("sudo apt install -y chromium-browser unclutter")
 
 def create_slides_script(url):
     """Create the startup shell script for Google Slides."""
@@ -32,13 +25,13 @@ sleep 10
 chromium-browser --kiosk --disable-infobars --disable-restore-session-state "{url}"
 """
     script_path = "/usr/local/bin/start_google_slides.sh"
-    try:
-        with open(script_path, "w") as script_file:
-            script_file.write(script_content)
-        run_command(["chmod", "755", script_path], use_sudo=True)
+    with open(script_path, "w") as script_file:
+        script_file.write(script_content)
+    os.system(f"sudo chmod 755 {script_path}")
+    if os.path.exists(script_path):
         print(f"Successfully created startup script at: {script_path}")
-    except Exception as e:
-        print(f"Failed to create script {script_path}: {e}")
+    else:
+        print(f"Failed to create startup script at: {script_path}")
     return script_path
 
 def create_autostart_entry(script_path):
@@ -54,12 +47,12 @@ Name=Start Google Slides
 Comment=Automatically run Google Slides on boot
 """
     desktop_entry_path = os.path.join(autostart_dir, "google_slides.desktop")
-    try:
-        with open(desktop_entry_path, "w") as desktop_file:
-            desktop_file.write(desktop_entry_content)
+    with open(desktop_entry_path, "w") as desktop_file:
+        desktop_file.write(desktop_entry_content)
+    if os.path.exists(desktop_entry_path):
         print(f"Successfully created autostart entry at: {desktop_entry_path}")
-    except Exception as e:
-        print(f"Failed to create autostart entry {desktop_entry_path}: {e}")
+    else:
+        print(f"Failed to create autostart entry at: {desktop_entry_path}")
     return desktop_entry_path
 
 def create_unclutter_autostart():
@@ -75,12 +68,12 @@ Name=Unclutter
 Comment=Hide the mouse cursor when idle
 """
     unclutter_entry_path = os.path.join(autostart_dir, "unclutter.desktop")
-    try:
-        with open(unclutter_entry_path, "w") as unclutter_file:
-            unclutter_file.write(unclutter_entry_content)
+    with open(unclutter_entry_path, "w") as unclutter_file:
+        unclutter_file.write(unclutter_entry_content)
+    if os.path.exists(unclutter_entry_path):
         print(f"Successfully created unclutter autostart entry at: {unclutter_entry_path}")
-    except Exception as e:
-        print(f"Failed to create unclutter autostart entry {unclutter_entry_path}: {e}")
+    else:
+        print(f"Failed to create unclutter autostart entry at: {unclutter_entry_path}")
 
 def update_xsessionrc():
     """Add xset commands and unclutter to ~/.xsessionrc."""
@@ -94,12 +87,12 @@ xset s noblank
 # Run unclutter to hide the mouse cursor when idle
 unclutter -idle 0
 """
-    try:
-        with open(xsessionrc_path, "w") as file:
-            file.write(commands)
+    with open(xsessionrc_path, "w") as file:
+        file.write(commands)
+    if os.path.exists(xsessionrc_path):
         print(f"Successfully updated {xsessionrc_path} with xset commands and unclutter.")
-    except Exception as e:
-        print(f"Failed to update {xsessionrc_path}: {e}")
+    else:
+        print(f"Failed to update {xsessionrc_path}")
 
 def main():
     print("Google Slides Auto-Run, Screen Settings, and Unclutter Setup")
