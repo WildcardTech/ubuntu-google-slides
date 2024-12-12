@@ -6,7 +6,10 @@ def create_autostart_dir():
     autostart_dir = os.path.expanduser("~/.config/autostart")
     try:
         os.makedirs(autostart_dir, exist_ok=True)
-        print(f"Created {autostart_dir} directory.")
+        if os.path.exists(autostart_dir):
+            print(f"Successfully created or verified {autostart_dir} directory.")
+        else:
+            print(f"Directory {autostart_dir} does not exist after attempting to create it.")
     except Exception as e:
         print(f"Failed to create directory {autostart_dir}: {e}")
 
@@ -35,7 +38,10 @@ chromium-browser --kiosk --disable-infobars --disable-restore-session-state "{ur
         with open(script_path, "w") as script_file:
             script_file.write(script_content)
         os.chmod(script_path, 0o755)
-        print(f"Created startup script at: {script_path}")
+        if os.path.exists(script_path):
+            print(f"Successfully created startup script at: {script_path}")
+        else:
+            print(f"Startup script {script_path} does not exist after attempting to create it.")
     except Exception as e:
         print(f"Failed to create script {script_path}: {e}")
     return script_path
@@ -56,7 +62,10 @@ Comment=Automatically run Google Slides on boot
     try:
         with open(desktop_entry_path, "w") as desktop_file:
             desktop_file.write(desktop_entry_content)
-        print(f"Created autostart entry at: {desktop_entry_path}")
+        if os.path.exists(desktop_entry_path):
+            print(f"Successfully created autostart entry at: {desktop_entry_path}")
+        else:
+            print(f"Autostart entry {desktop_entry_path} does not exist after attempting to create it.")
     except Exception as e:
         print(f"Failed to create autostart entry {desktop_entry_path}: {e}")
     return desktop_entry_path
@@ -77,7 +86,10 @@ Comment=Hide the mouse cursor when idle
     try:
         with open(unclutter_entry_path, "w") as unclutter_file:
             unclutter_file.write(unclutter_entry_content)
-        print(f"Created unclutter autostart entry at: {unclutter_entry_path}")
+        if os.path.exists(unclutter_entry_path):
+            print(f"Successfully created unclutter autostart entry at: {unclutter_entry_path}")
+        else:
+            print(f"Unclutter autostart entry {unclutter_entry_path} does not exist after attempting to create it.")
     except Exception as e:
         print(f"Failed to create unclutter autostart entry {unclutter_entry_path}: {e}")
 
@@ -96,7 +108,10 @@ unclutter -idle 0
     try:
         with open(xsessionrc_path, "w") as file:
             file.write(commands)
-        print(f"Updated {xsessionrc_path} with xset commands and unclutter.")
+        if os.path.exists(xsessionrc_path):
+            print(f"Successfully updated {xsessionrc_path} with xset commands and unclutter.")
+        else:
+            print(f"{xsessionrc_path} does not exist after attempting to update it.")
     except Exception as e:
         print(f"Failed to update {xsessionrc_path}: {e}")
 
