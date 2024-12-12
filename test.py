@@ -1,21 +1,25 @@
 import os
 
 def create_autostart_dir():
-    """Ensure the ~/.config/autostart directory exists."""
-    config_dir = os.path.expanduser("~/.config")
-    autostart_dir = os.path.join(config_dir, "autostart")
-
+    """Create the ~/.config/autostart directory."""
+    autostart_dir = os.path.expanduser("~/.config/autostart")
     try:
-        if not os.path.exists(config_dir):
-            os.makedirs(config_dir, exist_ok=True)
-            print(f"Ensured {config_dir} directory exists.")
-        if not os.path.exists(autostart_dir):
-            os.makedirs(autostart_dir, exist_ok=True)
-            print(f"Ensured {autostart_dir} directory exists.")
-        else:
-            print(f"Directory {autostart_dir} already exists.")
+        os.makedirs(autostart_dir, exist_ok=True)
+        print(f"Created {autostart_dir} directory.")
     except Exception as e:
         print(f"Failed to create directory {autostart_dir}: {e}")
 
+def create_file():
+    """Create a test file in the autostart directory."""
+    file_path = os.path.expanduser("~/.config/autostart/test_file.txt")
+    try:
+        with open(file_path, "w") as file:
+            file.write("This is a test file.")
+        print(f"Created file at: {file_path}")
+    except Exception as e:
+        print(f"Failed to create file {file_path}: {e}")
+
 if __name__ == "__main__":
     create_autostart_dir()
+    create_file()
+
