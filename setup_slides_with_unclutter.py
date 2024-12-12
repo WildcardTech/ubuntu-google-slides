@@ -35,9 +35,10 @@ chromium-browser --kiosk --disable-infobars --disable-restore-session-state "{ur
 """
     script_path = "/usr/local/bin/start_google_slides.sh"
     try:
-        with open(script_path, "w") as script_file:
+        with open("start_google_slides.sh", "w") as script_file:
             script_file.write(script_content)
-        os.chmod(script_path, 0o755)
+        subprocess.run(["sudo", "mv", "start_google_slides.sh", script_path], check=True)
+        subprocess.run(["sudo", "chmod", "755", script_path], check=True)
         if os.path.exists(script_path):
             print(f"Successfully created startup script at: {script_path}")
         else:
@@ -60,8 +61,9 @@ Comment=Automatically run Google Slides on boot
 """
     desktop_entry_path = os.path.join(autostart_dir, "google_slides.desktop")
     try:
-        with open(desktop_entry_path, "w") as desktop_file:
+        with open("google_slides.desktop", "w") as desktop_file:
             desktop_file.write(desktop_entry_content)
+        subprocess.run(["sudo", "mv", "google_slides.desktop", desktop_entry_path], check=True)
         if os.path.exists(desktop_entry_path):
             print(f"Successfully created autostart entry at: {desktop_entry_path}")
         else:
@@ -84,8 +86,9 @@ Comment=Hide the mouse cursor when idle
 """
     unclutter_entry_path = os.path.join(autostart_dir, "unclutter.desktop")
     try:
-        with open(unclutter_entry_path, "w") as unclutter_file:
+        with open("unclutter.desktop", "w") as unclutter_file:
             unclutter_file.write(unclutter_entry_content)
+        subprocess.run(["sudo", "mv", "unclutter.desktop", unclutter_entry_path], check=True)
         if os.path.exists(unclutter_entry_path):
             print(f"Successfully created unclutter autostart entry at: {unclutter_entry_path}")
         else:
@@ -106,8 +109,9 @@ xset s noblank
 unclutter -idle 0
 """
     try:
-        with open(xsessionrc_path, "w") as file:
+        with open("xsessionrc_temp", "w") as file:
             file.write(commands)
+        subprocess.run(["sudo", "mv", "xsessionrc_temp", xsessionrc_path], check=True)
         if os.path.exists(xsessionrc_path):
             print(f"Successfully updated {xsessionrc_path} with xset commands and unclutter.")
         else:
@@ -146,3 +150,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
