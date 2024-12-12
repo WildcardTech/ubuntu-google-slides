@@ -1,26 +1,27 @@
 import os
 import subprocess
 
+def run_command(command, use_sudo=False):
+    """Run a shell command with optional sudo and log output."""
+    if use_sudo:
+        command.insert(0, 'sudo')
+    result = subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+    print(result.stdout)
+    if result.returncode != 0:
+        print(f"Error running command: {' '.join(command)}\n{result.stderr}")
+    return result.returncode
+
 def create_autostart_dir():
     """Create the ~/.config/autostart directory."""
     autostart_dir = os.path.expanduser("~/.config/autostart")
-    try:
-        subprocess.run(["sudo", "mkdir", "-p", autostart_dir], check=True)
-        print(f"Successfully created {autostart_dir} directory.")
-    except subprocess.CalledProcessError as e:
-        print(f"Failed to create directory {autostart_dir}: {e}")
+    run_command(["mkdir", "-p", autostart_dir], use_sudo=True)
 
 def install_packages():
     """Install necessary packages."""
-    try:
-        print("Updating package lists...")
-        subprocess.run(["sudo", "apt", "update"], check=True)
-        print("Installing required packages (Chromium, Unclutter)...")
-        packages = ["chromium-browser", "unclutter"]
-        subprocess.run(["sudo", "apt", "install", "-y"] + packages, check=True)
-        print("Packages installed successfully.")
-    except subprocess.CalledProcessError as e:
-        print(f"Failed to install packages: {e}")
+    print("Updating package lists...")
+    run_command(["apt", "update"], use_sudo=True)
+    print("Installing required packages (Chromium, Unclutter)...")
+    run_command(["apt", "install", "-y", "chromium-browser", "unclutter"], use_sudo=True)
 
 def create_slides_script(url):
     """Create the startup shell script for Google Slides."""
@@ -34,7 +35,7 @@ chromium-browser --kiosk --disable-infobars --disable-restore-session-state "{ur
     try:
         with open(script_path, "w") as script_file:
             script_file.write(script_content)
-        subprocess.run(["sudo", "chmod", "755", script_path], check=True)
+        run_command(["chmod", "755", script_path], use_sudo=True)
         print(f"Successfully created startup script at: {script_path}")
     except Exception as e:
         print(f"Failed to create script {script_path}: {e}")
